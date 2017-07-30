@@ -22,13 +22,13 @@ public class UserService {
     }
 
 
-    public void persistMessage(final Long to, final Long from,
+    public void persistMessage(final String to, final String from,
                                final String message) {
         checkArgument(! StringUtils.isEmpty(message), "Won't store Empty Message!");
         this.user.getUserDao().insertMessage(to, from, message);
     }
 
-    public List<Message> getChatHistory(final Long to, final Long from) {
+    public List<Message> getChatHistory(final String to, final String from) {
         checkArgument(! to.equals(from), "Cant send yourself something, it's not facebook!");
         return this.user.getUserDao().fetchMessages(to, from);
     }

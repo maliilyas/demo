@@ -38,8 +38,8 @@ public class UserServiceTest {
      */
     @Test
     public void testSendMessage() {
-        final Long to = 1L;
-        final Long from = 2L;
+        final String to = "user1";
+        final String from = "user2";
         final String message = "Testing Message";
         final String now = DbConstants.MSG_DATE_FORMAT.format(new Date());
         userService.persistMessage(to, from, message);
@@ -56,8 +56,8 @@ public class UserServiceTest {
      */
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testSendEmptyMessage() {
-        final Long to = 1L;
-        final Long from = 2L;
+        final String to = "user1";
+        final String from = "user2";
         final String message = "";
         userService.persistMessage(to, from, message);
     }
@@ -67,8 +67,8 @@ public class UserServiceTest {
      */
     @Test
     public void testShowMessages()  {
-        final Long to = 1L;
-        final Long from = 2L;
+        final String to = "user1";
+        final String from = "user2";
         List<Message> messages = userService.getChatHistory(to, from);
     }
 
@@ -77,8 +77,8 @@ public class UserServiceTest {
      */
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testShowMessagesWhenSenderisReceiver ( ) {
-        final Long to = 1L;
-        final Long from = 1L;
+        final String to = "user1";
+        final String from = "user1";
         List<Message> messages = userService.getChatHistory(to, from);
 
     }

@@ -13,7 +13,7 @@ public interface UserDao {
      * @param from, id of the sender.
      * @param message, message
      */
-    public void insertMessage(final Long to, final Long from, final String message);
+    public void insertMessage(final String to, final String from, final String message);
 
     /**
      *
@@ -21,6 +21,6 @@ public interface UserDao {
      * @param from, id of the sender.
      * @return The List of messages.
      */
-    public List<Message> fetchMessages(final Long to, final Long from);
+    public List<Message> fetchMessages(final String to, final String from);
 }
 

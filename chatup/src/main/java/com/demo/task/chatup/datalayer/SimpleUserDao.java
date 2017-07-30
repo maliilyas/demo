@@ -63,11 +63,11 @@ public class SimpleUserDao implements UserDao {
     }
 
     @Override
-    public List<Message> fetchMessages(final Long to, final Long from) {
+    public List<Message> fetchMessages(final String to, final String from) {
         try {
             final List<Message> messages = this.jdbcTemplate.query(
                     String.format(DbConstants.FETCH_MSGS_QRY, to, from),
-                    (rs, rowNum) -> new Message(rs.getLong("to"), rs.getLong("from"), rs.getString("message"),
+                    (rs, rowNum) -> new Message(rs.getString("to"), rs.getString("from"), rs.getString("message"),
                             DbConstants.MSG_DATE_FORMAT.format(rs.getDate("timeStamp"))));
 
         } catch (DataAccessException ex) {
@@ -78,7 +78,7 @@ public class SimpleUserDao implements UserDao {
     }
 
     @Override
-    public void insertMessage(final Long to, final Long from,
+    public void insertMessage(final String to, final String from,
                               final String message) {
         try {
             final Date now = new Date();

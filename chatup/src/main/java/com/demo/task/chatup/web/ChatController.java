@@ -5,7 +5,9 @@ import com.demo.task.chatup.datalayer.User;
 import com.demo.task.chatup.service.UserService;
 import com.google.common.annotations.VisibleForTesting;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +25,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @RequestMapping("/chat")
 public class ChatController {
 
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
     private UserService userService;
 
     @RequestMapping(value="/login", method = RequestMethod.POST,
