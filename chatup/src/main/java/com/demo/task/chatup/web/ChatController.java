@@ -1,10 +1,17 @@
 package com.demo.task.chatup.web;
 
+import com.demo.task.chatup.datalayer.Message;
 import com.demo.task.chatup.datalayer.User;
 import com.demo.task.chatup.service.UserService;
+import com.google.common.annotations.VisibleForTesting;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -15,24 +22,33 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @RestController
 @RequestMapping("/chat")
 public class ChatController {
-    private final UserService userService;
-    public ChatController(final UserService userService) {
-        this.userService = checkNotNull(userService);
-    }
 
-    @RequestMapping(value="/login")
-    public void login(final User user) {
+    private UserService userService;
 
-    }
-
-    @RequestMapping(value="/send")
-    public void sendMessage(final Long to, final Long from, final String message) {
+    @RequestMapping(value="/login", method = RequestMethod.POST,
+            produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {"application/json"})
+    @ApiOperation(value = "login", notes = "Login User with username and password.")
+    public void login(@RequestBody final User user) {
 
     }
 
-    @RequestMapping(value="/receive")
-    public void receiveMessage(final Long from, final Long to, final String message) {
+    @RequestMapping(value="/send", method = RequestMethod.POST,
+            produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {"application/json"})
+    @ApiOperation(value = "persistMessage", notes = "Sending the Message to the user.")
+    public void sendMessage(@RequestBody final Message msg) {
+        if(this.userService != null) {
+            this.userService.persistMessage(msg.getTo(), msg.getFrom(), msg.getMessage());
+            // notify receiver
+        } else {
+            throw new IllegalStateException("User Service is not initated!!!");
+        }
 
+    }
+
+    @VisibleForTesting
+    protected void initUserSession(final User user) {
+        checkNotNull(user, "User can not be null!!!");
+        this.userService = new UserService(user);
     }
 
 }

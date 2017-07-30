@@ -13,13 +13,9 @@ public class ChatUpConfig {
 
     @Bean
     public ChatController chatController() {
-        return new ChatController(userService());
+        return new ChatController();
     }
 
-    @Bean
-    public UserService userService() {
-        return new UserService(userDao());
-    }
 
     @Bean
     public UserDao userDao() {
