@@ -12,12 +12,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class ChatUpConfig {
 
     @Bean
-    public ChatController chatController() {
-        return new ChatController();
-    }
-
-
-    @Bean
     public UserDao userDao() {
         return new SimpleUserDao(jdbcTemplate());
     }

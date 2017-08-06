@@ -12,7 +12,6 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Service
 public class UserService {
 
     private final User user;
@@ -31,5 +30,9 @@ public class UserService {
     public List<Message> getChatHistory(final String to, final String from) {
         checkArgument(! to.equals(from), "Cant send yourself something, it's not facebook!");
         return this.user.getUserDao().fetchMessages(to, from);
+    }
+
+    public User getUser() {
+        return this.user;
     }
 }

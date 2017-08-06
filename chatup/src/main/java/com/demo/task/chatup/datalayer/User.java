@@ -14,6 +14,7 @@ public class User {
 
     private String name;
     private String password;
+    private boolean loggedIn = false;
     private Map<String, List<Message>> friendMessagesMap = new HashMap();
 
     @Autowired
@@ -33,6 +34,12 @@ public class User {
         this.friendMessagesMap.put(sender, messages);
     }
 
+    public boolean isLoggedIn() {
+        return this.loggedIn;
+    }
+    public void setLoggedIn(final boolean status) {
+        this.loggedIn = status;
+    }
     public UserDao getUserDao() {
         return this.userDao;
     }

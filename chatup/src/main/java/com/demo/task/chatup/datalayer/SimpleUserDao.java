@@ -64,17 +64,10 @@ public class SimpleUserDao implements UserDao {
 
     @Override
     public List<Message> fetchMessages(final String to, final String from) {
-        try {
-            final List<Message> messages = this.jdbcTemplate.query(
+           return  this.jdbcTemplate.query(
                     String.format(DbConstants.FETCH_MSGS_QRY, to, from),
                     (rs, rowNum) -> new Message(rs.getString("to"), rs.getString("from"), rs.getString("message"),
                             DbConstants.MSG_DATE_FORMAT.format(rs.getDate("timeStamp"))));
-
-        } catch (DataAccessException ex) {
-            logger.error("Unable to fetch chat history.", ex);
-        }
-        return null;
-
     }
 
     @Override

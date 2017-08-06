@@ -6,11 +6,11 @@ import java.text.SimpleDateFormat;
 public class DbConstants {
 
     public static final DateFormat MSG_DATE_FORMAT = new SimpleDateFormat("YYYY-MM-DD HH:MM");
-    public static final String CREATE_USER_TABLE_QRY = "CREATE TABLE IF NOT EXIST USER"
+    public static final String CREATE_USER_TABLE_QRY = "CREATE TABLE IF NOT EXISTS USER"
             + " name VARCHAR(30) NOT NULL,"
             + " pass VARCHAR(20) NOT NULL,"
             + " ADD PRIMARY KEY (name)";
-    public static final String CREATE_MESSAGE_TABLE_QRY = "CREATE TABLE IF NOT EXIST MESSAGES"
+    public static final String CREATE_MESSAGE_TABLE_QRY = "CREATE TABLE IF NOT EXISTS MESSAGES"
             + " to VARCHAR(30) NOT NULL,"
             + " from VARCHAR(30) NOT NULL,"
             + " message VARCHAR(300) NOT NULL,"

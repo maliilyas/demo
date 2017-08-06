@@ -28,14 +28,14 @@ public class ChatController {
     public static final String APP_PREFIX = "/chat";
     public static final String MESSAAGE_BROKER_ENDPOINT = "/send";
 
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
     private UserService userService;
 
     @RequestMapping(value="/login", method = RequestMethod.POST,
             produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {"application/json"})
     @ApiOperation(value = "login", notes = "Login User with username and password.")
     public void login(@RequestBody final User user) {
+        initUserSession(user);
+        this.userService.getUser().setLoggedIn(true);
 
     }
 
@@ -43,12 +43,10 @@ public class ChatController {
             produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {"application/json"})
     @ApiOperation(value = "persistMessage", notes = "Sending the Message to the user.")
     public void sendMessage(@RequestBody final Message msg) {
-        if(this.userService != null) {
+            checkNotNull(this.userService, "User has not be Logged In.");
             this.userService.persistMessage(msg.getTo(), msg.getFrom(), msg.getMessage());
             // notify receiver
-        } else {
-            throw new IllegalStateException("User Service is not initated!!!");
-        }
+
 
     }
 
