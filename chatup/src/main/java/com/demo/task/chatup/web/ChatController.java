@@ -30,12 +30,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @RequestMapping(ChatController.APP_PREFIX)
 public class ChatController {
 
-    public static final String APP_PREFIX = "/chat";
+    public static final String APP_PREFIX               = "/chat";
     public static final String MESSAAGE_BROKER_ENDPOINT = "/send";
+    public static final String LOGIN_ENDPOINT           = "/login";
 
     @Autowired
     private SimpleUserDao userService;
-    private Set<User> loggedInUsers = new HashSet();
+    protected Set<User> loggedInUsers = new HashSet();
 
     @RequestMapping(value = "/login", method = RequestMethod.POST,
             produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {"application/json"})
