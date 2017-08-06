@@ -27,3 +27,4 @@ nbdist/
 .idea/
 mvnw.cmd
 mvnw
+.DS_Store

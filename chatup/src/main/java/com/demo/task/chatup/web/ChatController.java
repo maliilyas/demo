@@ -22,8 +22,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 
 @RestController
-@RequestMapping("/chat")
+@RequestMapping(ChatController.APP_PREFIX)
 public class ChatController {
+
+    public static final String APP_PREFIX = "/chat";
+    public static final String MESSAAGE_BROKER_ENDPOINT = "/send";
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
@@ -36,7 +39,7 @@ public class ChatController {
 
     }
 
-    @RequestMapping(value="/send", method = RequestMethod.POST,
+    @RequestMapping(value=MESSAAGE_BROKER_ENDPOINT, method = RequestMethod.POST,
             produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {"application/json"})
     @ApiOperation(value = "persistMessage", notes = "Sending the Message to the user.")
     public void sendMessage(@RequestBody final Message msg) {
