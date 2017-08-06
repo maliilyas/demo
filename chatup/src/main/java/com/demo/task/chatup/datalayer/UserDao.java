@@ -18,9 +18,8 @@ public interface UserDao {
     /**
      *
      * @param to, id of the receiver.
-     * @param from, id of the sender.
      * @return The List of messages.
      */
-    public List<Message> fetchMessages(final String to, final String from);
+    public List<Message> fetchMessages(final String to);
 }
 

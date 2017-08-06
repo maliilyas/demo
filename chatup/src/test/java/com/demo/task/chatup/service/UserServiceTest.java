@@ -22,7 +22,6 @@ public class UserServiceTest {
 
     private JdbcTemplate mockJdbcTemplate;
     private SimpleUserDao simpleUserDao;
-    private UserService userService;
 
     @BeforeMethod
     public void setUp() {
@@ -30,7 +29,6 @@ public class UserServiceTest {
         simpleUserDao = new SimpleUserDao(mockJdbcTemplate);
         final User mockUser    = mock(User.class);
         when(mockUser.getUserDao()).thenReturn(simpleUserDao);
-        userService = new UserService(mockUser);
     }
 
     /**
@@ -42,7 +40,7 @@ public class UserServiceTest {
         final String from = "user2";
         final String message = "Testing Message";
         final String now = DbConstants.MSG_DATE_FORMAT.format(new Date());
-        userService.persistMessage(to, from, message);
+        simpleUserDao.insertMessage(to, from, message);
         verify(mockJdbcTemplate, times(1)).update(DbConstants.INSERT_MSG_QRY, new Object[]{
                 to,
                 from,
@@ -59,7 +57,7 @@ public class UserServiceTest {
         final String to = "user1";
         final String from = "user2";
         final String message = "";
-        userService.persistMessage(to, from, message);
+        simpleUserDao.insertMessage(to, from, message);
     }
 
     /**
@@ -69,18 +67,8 @@ public class UserServiceTest {
     public void testShowMessages()  {
         final String to = "user1";
         final String from = "user2";
-        List<Message> messages = userService.getChatHistory(to, from);
+        List<Message> messages = simpleUserDao.fetchMessages(to);
     }
 
-    /**
-     * Fetching messages where to = from
-     */
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testShowMessagesWhenSenderisReceiver ( ) {
-        final String to = "user1";
-        final String from = "user1";
-        List<Message> messages = userService.getChatHistory(to, from);
-
-    }
 
 }

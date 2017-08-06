@@ -1,23 +1,28 @@
 package com.demo.task.chatup.web;
 
 import com.demo.task.chatup.datalayer.Message;
+import com.demo.task.chatup.datalayer.SimpleUserDao;
 import com.demo.task.chatup.datalayer.User;
-import com.demo.task.chatup.service.UserService;
 import com.google.common.annotations.VisibleForTesting;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * ChatController for sending and receiving the messages among users
+ * ChatController for sending and receiving the messages among loggedInUsers
  * and maintain the session.
  */
 
@@ -28,32 +33,44 @@ public class ChatController {
     public static final String APP_PREFIX = "/chat";
     public static final String MESSAAGE_BROKER_ENDPOINT = "/send";
 
-    private UserService userService;
+    @Autowired
+    private SimpleUserDao userService;
+    private Set<User> loggedInUsers = new HashSet();
 
-    @RequestMapping(value="/login", method = RequestMethod.POST,
+    @RequestMapping(value = "/login", method = RequestMethod.POST,
             produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {"application/json"})
     @ApiOperation(value = "login", notes = "Login User with username and password.")
-    public void login(@RequestBody final User user) {
-        initUserSession(user);
-        this.userService.getUser().setLoggedIn(true);
+    public List<Message> login(@RequestBody final User user) {
+        if (!loggedInUsers.contains(user)) {
+            initUserSession(user);
+            return userService.fetchMessages(user.getName());
+        }
+        return new ArrayList();
 
     }
 
-    @RequestMapping(value=MESSAAGE_BROKER_ENDPOINT, method = RequestMethod.POST,
+    @RequestMapping(value = MESSAAGE_BROKER_ENDPOINT, method = RequestMethod.POST,
             produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {"application/json"})
     @ApiOperation(value = "persistMessage", notes = "Sending the Message to the user.")
-    public void sendMessage(@RequestBody final Message msg) {
-            checkNotNull(this.userService, "User has not be Logged In.");
-            this.userService.persistMessage(msg.getTo(), msg.getFrom(), msg.getMessage());
-            // notify receiver
-
-
+    @SendTo("/chat/sent_message")
+    public String sendMessage(@RequestBody final Message msg) {
+        checkNotNull(this.userService, "User has not be Logged In.");
+        this.userService.insertMessage(msg.getTo(), msg.getFrom(), msg.getMessage());
+        return msg.getMessage();
     }
 
     @VisibleForTesting
     protected void initUserSession(final User user) {
         checkNotNull(user, "User can not be null!!!");
-        this.userService = new UserService(user);
+        user.setLoggedIn(true);
+        loggedInUsers.add(user);
+    }
+
+    protected void signOff(final User user) {
+        checkNotNull(user, "User can not be null!!!");
+        user.setLoggedIn(false);
+        loggedInUsers.remove(user);
+
     }
 
 }

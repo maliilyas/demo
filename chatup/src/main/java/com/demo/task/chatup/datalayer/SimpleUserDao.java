@@ -4,20 +4,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
 import static com.demo.task.chatup.datalayer.DbConstants.MSG_DATE_FORMAT;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * TODO: Add signup, addfriend, delete/block friend functionality laters.
+ * Dao for User for adding messages etc.
  */
 @Component
 public class SimpleUserDao implements UserDao {
@@ -47,43 +45,41 @@ public class SimpleUserDao implements UserDao {
      * Adding predefined two users for Demo.
      */
     private void hookUpTwoUsers() {
-        try {
-            this.jdbcTemplate.update(DbConstants.INSERT_USER_QUERY, new Object[]{
-                    "superman",
-                    "ihatebatman"
-            });
-            this.jdbcTemplate.update(DbConstants.INSERT_USER_QUERY, new Object[]{
-                    "wonderwoman",
-                    "ihatebatmantoo"
-            });
-        } catch (DataAccessException ex) {
-            logger.error("Unable to add predefined users, the app may not work as expected.");
-        }
+
+        this.jdbcTemplate.update(DbConstants.INSERT_USER_QUERY, new Object[]{
+                "superman",
+                "ihatebatman"
+        });
+        this.jdbcTemplate.update(DbConstants.INSERT_USER_QUERY, new Object[]{
+                "wonderwoman",
+                "ihatebatmantoo"
+        });
+
 
     }
 
     @Override
-    public List<Message> fetchMessages(final String to, final String from) {
-           return  this.jdbcTemplate.query(
-                    String.format(DbConstants.FETCH_MSGS_QRY, to, from),
-                    (rs, rowNum) -> new Message(rs.getString("to"), rs.getString("from"), rs.getString("message"),
-                            DbConstants.MSG_DATE_FORMAT.format(rs.getDate("timeStamp"))));
+    public List<Message> fetchMessages(final String to) {
+        checkArgument(!StringUtils.isEmpty(to), "Sender can not be Empty");
+        return this.jdbcTemplate.query(
+                String.format(DbConstants.FETCH_MSGS_QRY, to),
+                (rs, rowNum) -> new Message(rs.getString("to"), rs.getString("from"), rs.getString("message"),
+                        DbConstants.MSG_DATE_FORMAT.format(rs.getDate("timeStamp"))));
     }
 
     @Override
     public void insertMessage(final String to, final String from,
                               final String message) {
-        try {
-            final Date now = new Date();
-            this.jdbcTemplate.update(DbConstants.INSERT_MSG_QRY, new Object[]{
-                    to,
-                    from,
-                    message,
-                    MSG_DATE_FORMAT.format(now)
-            });
+        checkArgument(!StringUtils.isEmpty(to), "Sender can not be Empty");
+        checkArgument(!StringUtils.isEmpty(from), "Receiver can not be Empty");
+        checkArgument(!StringUtils.isEmpty(message), "Message can not be Empty");
 
-        } catch (DataAccessException ex) {
-            logger.error("Error occured while inserting message.", ex);
-        }
+        final Date now = new Date();
+        this.jdbcTemplate.update(DbConstants.INSERT_MSG_QRY, new Object[]{
+                to,
+                from,
+                message,
+                MSG_DATE_FORMAT.format(now)
+        });
     }
 }

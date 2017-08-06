@@ -20,9 +20,16 @@ public class User {
     @Autowired
     private UserDao userDao;
 
+    public User() {
+        // for serialzing , default constructor needed.
+    }
     public User(final String name, final String password) {
         this.name = name;
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void addMessagesFromFriend(final String sender, final String message) {
@@ -37,7 +44,7 @@ public class User {
     public boolean isLoggedIn() {
         return this.loggedIn;
     }
-    public void setLoggedIn(final boolean status) {
+    public void setLoggedIn(boolean status) {
         this.loggedIn = status;
     }
     public UserDao getUserDao() {
